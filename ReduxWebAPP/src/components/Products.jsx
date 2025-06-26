@@ -1,36 +1,46 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { add } from '../store/cartSlice';
+import { fetchProducts } from '../store/productSlice';
+
 
 const Products = () => {
-    const [products, setProducts] = useState([]);
+    // const [products, setProducts] = useState([]);
+    const { data: products, status } = useSelector((state) => state.product)
+    // console.log('======= dttt', products);
     const dispatch = useDispatch();
 
+
+    // useEffect(() => {
+    //     const controller = new AbortController();
+
+    //     const fetchProducts = async () => {
+    //         try {
+    //             const res = await fetch('https://fakestoreapi.com/products', {
+    //                 signal: controller.signal,
+    //             });
+    //             const data = await res.json();
+    //             console.log(data);
+    //             setProducts(data);
+    //         } catch (error) {
+    //             if (error.name !== 'AbortError') {
+    //                 console.error('Fetch error:', error);
+    //             }
+    //         }
+    //     };
+
+    //     fetchProducts();
+
+    //     return () => {
+    //         controller.abort();
+    //     };
+    // }, []);
+
+    // using thunk
     useEffect(() => {
-        const controller = new AbortController();
-
-        const fetchProducts = async () => {
-            try {
-                const res = await fetch('https://fakestoreapi.com/products', {
-                    signal: controller.signal,
-                });
-                const data = await res.json();
-                console.log(data);
-                setProducts(data);
-            } catch (error) {
-                if (error.name !== 'AbortError') {
-                    console.error('Fetch error:', error);
-                }
-            }
-        };
-
-        fetchProducts();
-
-        return () => {
-            controller.abort();
-        };
-    }, []);
+        dispatch(fetchProducts());
+    }, [])
 
     const handleClick = (product) => {
         dispatch(add(product));
