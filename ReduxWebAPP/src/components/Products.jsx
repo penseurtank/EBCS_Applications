@@ -1,8 +1,11 @@
-
-import React, { useState, useEffect } from 'react'
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { add } from '../store/cartSlice';
 
 const Products = () => {
     const [products, setProducts] = useState([]);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const controller = new AbortController();
@@ -10,7 +13,7 @@ const Products = () => {
         const fetchProducts = async () => {
             try {
                 const res = await fetch('https://fakestoreapi.com/products', {
-                    signal: controller.signal
+                    signal: controller.signal,
                 });
                 const data = await res.json();
                 console.log(data);
@@ -20,18 +23,18 @@ const Products = () => {
                     console.error('Fetch error:', error);
                 }
             }
-        }
+        };
 
         fetchProducts();
 
         return () => {
-            controller.abort(); // Cleanup function
-        }
-    }, [])
+            controller.abort();
+        };
+    }, []);
 
-    const handleClick = () => {
-        console.log('add to cart action triggered...')
-    }
+    const handleClick = (product) => {
+        dispatch(add(product));
+    };
 
     return (
         <div className="productsWrapper">
@@ -43,13 +46,13 @@ const Products = () => {
                     <h4 className="title">{product.title}</h4>
                     <h5 className="price">${product.price}</h5>
                     <div className="spacer" />
-                    <button className="btn" onClick={handleClick}>Add to cart</button>
+                    <button className="btn" onClick={() => handleClick(product)}>
+                        Add to cart
+                    </button>
                 </div>
             ))}
         </div>
+    );
+};
 
-
-    )
-}
-
-export default Products
+export default Products;
