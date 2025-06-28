@@ -1,0 +1,88 @@
+# Node modules
+node_modules/
+
+# Build output
+dist/
+build/
+out/
+
+# Environment variables
+.env
+.env.*.local
+*.env.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Coverage reports
+coverage/
+*.lcov
+
+# Cache
+.cache/
+.next/
+.nuxt/
+.temp/
+tmp/
+*.tmp
+
+# Test output
+jest-test-results.json
+
+# Dependency directories for front-end frameworks
+bower_components/
+jspm_packages/
+
+# Parcel cache
+.parcel-cache/
+
+# VS Code settings
+.history/
+
+# Local development SSL certs
+*.pem
+
+# Optional: lock files depending on your package manager
+# Uncomment only the one you’re not using
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Mac .DS_Store
+.DS_Store
+
+# Linux trash
+.Trash-*
+
+# Logs folder
+logs/
+*.log
+
+# Lint cache
+.eslintcache
+stylelintcache
+
+# Firebase
+.firebase/
+.firebaserc
+
+# Docker
+docker-compose.override.yml
+
+# Misc
+*.local
