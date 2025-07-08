@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redux Thunk vs Redux Saga - Interactive Demo</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 30px;
+        font-size: 2.5em;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .comparison-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .thunk-card {
+        border-color: #3498db;
+      }
+
+      .saga-card {
+        border-color: #e74c3c;
+      }
+
+      .card h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        font-size: 1.8em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .thunk-card h2 {
+        color: #3498db;
+      }
+
+      .saga-card h2 {
+        color: #e74c3c;
+      }
+
+      .demo-section {
+        margin-bottom: 30px;
+      }
+
+      .demo-section h3 {
+        color: #34495e;
+        margin-bottom: 15px;
+        font-size: 1.2em;
+      }
+
+      .code-block {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        border-radius: 10px;
+        font-family: "Courier New", monospace;
+        font-size: 14px;
+        overflow-x: auto;
+        margin: 15px 0;
+        line-height: 1.5;
+      }
+
+      .highlight {
+        background: #f39c12;
+        color: #2c3e50;
+        padding: 2px 4px;
+        border-radius: 3px;
+      }
+
+      .button {
+        background: linear-gradient(45deg, #3498db, #2980b9);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        margin: 10px 5px;
+      }
+
+      .button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+      }
+
+      .saga-button {
+        background: linear-gradient(45deg, #e74c3c, #c0392b);
+      }
+
+      .saga-button:hover {
+        box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+      }
+
+      .output {
+        background: #ecf0f1;
+        border-left: 4px solid #3498db;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 0 10px 10px 0;
+        font-family: monospace;
+        white-space: pre-wrap;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+
+      .saga-output {
+        border-left-color: #e74c3c;
+      }
+
+      .feature-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      .feature-list li {
+        padding: 10px 0;
+        border-bottom: 1px solid #ecf0f1;
+        position: relative;
+        padding-left: 30px;
+      }
+
+      .feature-list li:before {
+        content: "✓";
+        color: #27ae60;
+        font-weight: bold;
+        position: absolute;
+        left: 0;
+        top: 10px;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 40px;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .comparison-table th,
+      .comparison-table td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #ecf0f1;
+      }
+
+      .comparison-table th {
+        background: #34495e;
+        color: white;
+        font-weight: bold;
+      }
+
+      .comparison-table tr:hover {
+        background: #f8f9fa;
+      }
+
+      .pros {
+        color: #27ae60;
+        font-weight: bold;
+      }
+
+      .cons {
+        color: #e74c3c;
+        font-weight: bold;
+      }
+
+      .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #3498db;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .status {
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+        font-weight: bold;
+      }
+
+      .status.loading {
+        background: #f39c12;
+        color: white;
+      }
+
+      .status.success {
+        background: #27ae60;
+        color: white;
+      }
+
+      .status.error {
+        background: #e74c3c;
+        color: white;
+      }
+
+      @media (max-width: 768px) {
+        .comparison-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .container {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔄 Redux Thunk vs Redux Saga</h1>
+
+      <div class="comparison-grid">
+        <!-- Thunk Section -->
+        <div class="card thunk-card">
+          <h2>🎯 Redux Thunk</h2>
+
+          <div class="demo-section">
+            <h3>Basic Concept</h3>
+            <p>
+              Thunk allows action creators to return functions instead of plain
+              objects, enabling asynchronous operations.
+            </p>
+
+            <div class="code-block">
+              // Simple thunk action creator const fetchUser = (userId) => {
+              return async (dispatch, getState) => { dispatch({ type:
+              'FETCH_USER_START' }); try { const response = await
+              fetch(`/api/users/${userId}`); const user = await response.json();
+              dispatch({ type: 'FETCH_USER_SUCCESS', payload: user }); } catch
+              (error) { dispatch({ type: 'FETCH_USER_ERROR', payload:
+              error.message }); } }; };
+            </div>
+          </div>
+
+          <div class="demo-section">
+            <h3>Live Demo</h3>
+            <button class="button" onclick="runThunkDemo()">
+              Run Thunk Demo
+            </button>
+            <button class="button" onclick="runThunkCancellation()">
+              Test Cancellation
+            </button>
+            <div id="thunkOutput" class="output"></div>
+          </div>
+
+          <div class="demo-section">
+            <h3>Key Features</h3>
+            <ul class="feature-list">
+              <li>Simple to understand and implement</li>
+              <li>Direct access to dispatch and getState</li>
+              <li>Works with async/await and promises</li>
+              <li>Minimal boilerplate</li>
+              <li>Perfect for simple async operations</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Saga Section -->
+        <div class="card saga-card">
+          <h2>🌟 Redux Saga</h2>
+
+          <div class="demo-section">
+            <h3>Basic Concept</h3>
+            <p>
+              Saga uses generator functions to create declarative side effects
+              that are easy to test and reason about.
+            </p>
+
+            <div class="code-block">
+              // Saga generator function function* fetchUserSaga(action) { try {
+              yield put({ type: 'FETCH_USER_START' }); const response = yield
+              call(fetch, `/api/users/${action.payload}`); const user = yield
+              call([response, 'json']); yield put({ type: 'FETCH_USER_SUCCESS',
+              payload: user }); } catch (error) { yield put({ type:
+              'FETCH_USER_ERROR', payload: error.message }); } } function*
+              watchFetchUser() { yield takeEvery('FETCH_USER_REQUEST',
+              fetchUserSaga); }
+            </div>
+          </div>
+
+          <div class="demo-section">
+            <h3>Live Demo</h3>
+            <button class="button saga-button" onclick="runSagaDemo()">
+              Run Saga Demo
+            </button>
+            <button class="button saga-button" onclick="runSagaCancellation()">
+              Test Cancellation
+            </button>
+            <button class="button saga-button" onclick="runSagaRace()">
+              Race Condition Demo
+            </button>
+            <div id="sagaOutput" class="output saga-output"></div>
+          </div>
+
+          <div class="demo-section">
+            <h3>Key Features</h3>
+            <ul class="feature-list">
+              <li>Declarative side effects</li>
+              <li>Built-in cancellation support</li>
+              <li>Advanced flow control (race, parallel)</li>
+              <li>Easy testing with step-by-step execution</li>
+              <li>Powerful patterns for complex async flows</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detailed Comparison Table -->
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Aspect</th>
+            <th>Redux Thunk</th>
+            <th>Redux Saga</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Learning Curve</strong></td>
+            <td class="pros">Easy - Just functions</td>
+            <td class="cons">Steep - Requires generator knowledge</td>
+          </tr>
+          <tr>
+            <td><strong>Boilerplate</strong></td>
+            <td class="pros">Minimal</td>
+            <td class="cons">More verbose</td>
+          </tr>
+          <tr>
+            <td><strong>Testing</strong></td>
+            <td class="cons">Harder - Need to mock dispatch</td>
+            <td class="pros">Easier - Step-by-step testing</td>
+          </tr>
+          <tr>
+            <td><strong>Cancellation</strong></td>
+            <td class="cons">Manual implementation needed</td>
+            <td class="pros">Built-in support</td>
+          </tr>
+          <tr>
+            <td><strong>Flow Control</strong></td>
+            <td class="cons">Limited - Basic async/await</td>
+            <td class="pros">Advanced - Race, parallel, fork</td>
+          </tr>
+          <tr>
+            <td><strong>Debugging</strong></td>
+            <td class="cons">Standard debugging</td>
+            <td class="pros">Redux-Saga dev tools</td>
+          </tr>
+          <tr>
+            <td><strong>Bundle Size</strong></td>
+            <td class="pros">Very small (~2KB)</td>
+            <td class="cons">Larger (~25KB)</td>
+          </tr>
+          <tr>
+            <td><strong>Use Case</strong></td>
+            <td class="pros">Simple async operations</td>
+            <td class="pros">Complex async flows</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      // Simulated API function
+      function simulateAPI(data, delay = 1000, shouldFail = false) {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            if (shouldFail) {
+              reject(new Error("API Error: Something went wrong"));
+            } else {
+              resolve({
+                id: 1,
+                name: "John Doe",
+                email: "john@example.com",
+                ...data,
+              });
+            }
+          }, delay);
+        });
+      }
+
+      // Thunk implementation simulation
+      function createThunkStore() {
+        let state = { user: null, loading: false, error: null };
+        const listeners = [];
+
+        const dispatch = (action) => {
+          if (typeof action === "function") {
+            // This is a thunk
+            return action(dispatch, () => state);
+          } else {
+            // Regular action
+            switch (action.type) {
+              case "FETCH_USER_START":
+                state = { ...state, loading: true, error: null };
+                break;
+              case "FETCH_USER_SUCCESS":
+                state = { ...state, loading: false, user: action.payload };
+                break;
+              case "FETCH_USER_ERROR":
+                state = { ...state, loading: false, error: action.payload };
+                break;
+              case "RESET":
+                state = { user: null, loading: false, error: null };
+                break;
+            }
+            listeners.forEach((listener) => listener(state));
+          }
+        };
+
+        const subscribe = (listener) => {
+          listeners.push(listener);
+          return () => {
+            const index = listeners.indexOf(listener);
+            listeners.splice(index, 1);
+          };
+        };
+
+        return { dispatch, subscribe, getState: () => state };
+      }
+
+      // Saga implementation simulation
+      function createSagaStore() {
+        let state = { user: null, loading: false, error: null };
+        const listeners = [];
+        let cancelToken = null;
+
+        const dispatch = (action) => {
+          switch (action.type) {
+            case "FETCH_USER_START":
+              state = { ...state, loading: true, error: null };
+              break;
+            case "FETCH_USER_SUCCESS":
+              state = { ...state, loading: false, user: action.payload };
+              break;
+            case "FETCH_USER_ERROR":
+              state = { ...state, loading: false, error: action.payload };
+              break;
+            case "FETCH_USER_REQUEST":
+              // Simulate saga watching for this action
+              if (cancelToken) {
+                cancelToken.cancelled = true;
+              }
+              cancelToken = { cancelled: false };
+              runSagaFlow(action.payload, cancelToken);
+              break;
+            case "CANCEL_REQUEST":
+              if (cancelToken) {
+                cancelToken.cancelled = true;
+              }
+              state = { ...state, loading: false, error: "Request cancelled" };
+              break;
+            case "RESET":
+              state = { user: null, loading: false, error: null };
+              break;
+          }
+          listeners.forEach((listener) => listener(state));
+        };
+
+        const runSagaFlow = async (userId, token) => {
+          try {
+            dispatch({ type: "FETCH_USER_START" });
+
+            if (token.cancelled) return;
+
+            const user = await simulateAPI({ userId });
+
+            if (token.cancelled) return;
+
+            dispatch({ type: "FETCH_USER_SUCCESS", payload: user });
+          } catch (error) {
+            if (!token.cancelled) {
+              dispatch({ type: "FETCH_USER_ERROR", payload: error.message });
+            }
+          }
+        };
+
+        const subscribe = (listener) => {
+          listeners.push(listener);
+          return () => {
+            const index = listeners.indexOf(listener);
+            listeners.splice(index, 1);
+          };
+        };
+
+        return { dispatch, subscribe, getState: () => state, cancelToken };
+      }
+
+      // Demo functions
+      let thunkStore = createThunkStore();
+      let sagaStore = createSagaStore();
+
+      // Thunk action creator
+      const fetchUserThunk = (userId) => {
+        return async (dispatch, getState) => {
+          dispatch({ type: "FETCH_USER_START" });
+          try {
+            const user = await simulateAPI({ userId });
+            dispatch({ type: "FETCH_USER_SUCCESS", payload: user });
+          } catch (error) {
+            dispatch({ type: "FETCH_USER_ERROR", payload: error.message });
+          }
+        };
+      };
+
+      function runThunkDemo() {
+        const output = document.getElementById("thunkOutput");
+        output.innerHTML = "";
+
+        thunkStore.dispatch({ type: "RESET" });
+
+        const unsubscribe = thunkStore.subscribe((state) => {
+          output.innerHTML += `State: ${JSON.stringify(state, null, 2)}\n`;
+        });
+
+        output.innerHTML += "Dispatching thunk action...\n";
+        thunkStore.dispatch(fetchUserThunk(123));
+
+        setTimeout(() => {
+          unsubscribe();
+          output.innerHTML += "\nThunk demo completed!\n";
+        }, 1500);
+      }
+
+      function runThunkCancellation() {
+        const output = document.getElementById("thunkOutput");
+        output.innerHTML = "Thunk cancellation demo:\n";
+        output.innerHTML += "Note: Thunk doesn't have built-in cancellation.\n";
+        output.innerHTML +=
+          "You need to implement it manually with flags or AbortController.\n\n";
+
+        let cancelled = false;
+
+        const cancellableThunk = () => {
+          return async (dispatch) => {
+            dispatch({ type: "FETCH_USER_START" });
+            try {
+              await new Promise((resolve) => setTimeout(resolve, 2000));
+              if (cancelled) {
+                output.innerHTML += "Request was cancelled!\n";
+                return;
+              }
+              const user = await simulateAPI({ userId: 456 });
+              dispatch({ type: "FETCH_USER_SUCCESS", payload: user });
+            } catch (error) {
+              if (!cancelled) {
+                dispatch({ type: "FETCH_USER_ERROR", payload: error.message });
+              }
+            }
+          };
+        };
+
+        thunkStore.dispatch(cancellableThunk());
+
+        setTimeout(() => {
+          cancelled = true;
+          output.innerHTML += "Cancelling request...\n";
+        }, 1000);
+      }
+
+      function runSagaDemo() {
+        const output = document.getElementById("sagaOutput");
+        output.innerHTML = "";
+
+        sagaStore.dispatch({ type: "RESET" });
+
+        const unsubscribe = sagaStore.subscribe((state) => {
+          output.innerHTML += `State: ${JSON.stringify(state, null, 2)}\n`;
+        });
+
+        output.innerHTML += "Dispatching saga action...\n";
+        sagaStore.dispatch({ type: "FETCH_USER_REQUEST", payload: 123 });
+
+        setTimeout(() => {
+          unsubscribe();
+          output.innerHTML += "\nSaga demo completed!\n";
+        }, 1500);
+      }
+
+      function runSagaCancellation() {
+        const output = document.getElementById("sagaOutput");
+        output.innerHTML = "Saga cancellation demo:\n";
+
+        sagaStore.dispatch({ type: "RESET" });
+        sagaStore.dispatch({ type: "FETCH_USER_REQUEST", payload: 456 });
+
+        setTimeout(() => {
+          output.innerHTML += "Cancelling saga request...\n";
+          sagaStore.dispatch({ type: "CANCEL_REQUEST" });
+        }, 500);
+      }
+
+      function runSagaRace() {
+        const output = document.getElementById("sagaOutput");
+        output.innerHTML = "Saga race condition demo:\n";
+        output.innerHTML += "Starting two competing requests...\n";
+
+        // Simulate race condition
+        const startTime = Date.now();
+
+        Promise.race([
+          simulateAPI({ request: "first" }, 1000),
+          simulateAPI({ request: "second" }, 800),
+        ]).then((result) => {
+          const duration = Date.now() - startTime;
+          output.innerHTML += `Winner: ${result.request} request (${duration}ms)\n`;
+          output.innerHTML +=
+            "In Saga, you can use race() effect to handle this!\n";
+        });
+      }
+
+      // Initialize with some demo content
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("thunkOutput").innerHTML =
+          'Click "Run Thunk Demo" to see it in action!';
+        document.getElementById("sagaOutput").innerHTML =
+          'Click "Run Saga Demo" to see it in action!';
+      });
+    </script>
+  </body>
+</html>

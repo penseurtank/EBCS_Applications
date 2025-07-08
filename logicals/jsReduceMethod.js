@@ -92,3 +92,15 @@ console.log(
   "and min-length",
   minByLength
 );
+
+/**
+ * Final summary about .reduce(), when to use and when to avoid
+ * -when to use...
+ * => when you want to perform an array into somthing else - number, object, array.
+ * => When you want to acumulate value like - total, merging, counting, .etc.
+ * => when you want powerful, flexible logic in one pass through array.
+ *
+ * - when to avoid.
+ * => if the opeation is simple, like filtering or mapping -- prefer to use .map() or filter().
+ * => for readability: reduce() can be complex to read of overused or misused.
+ */
