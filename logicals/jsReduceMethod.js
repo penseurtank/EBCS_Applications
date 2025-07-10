@@ -44,7 +44,9 @@ const flat = nested.reduce((acc, curr) => {
 console.log("final out of flatten value", flat);
 
 // 4 Count frequency of elements
-const fruits = ["apple", "orange", "apple", "apple", "orange", "banana"];
+// const fruits = ["apple", "orange", "apple", "apple", "orange", "banana"];
+const strf = "this is a cat and cat is pet and this is active";
+const fruits = strf.split(" ");
 const frequency = fruits.reduce((acc, curr) => {
   acc[curr] = (acc[curr] || 0) + 1;
   return acc;
