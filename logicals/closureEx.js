@@ -1,5 +1,17 @@
 // setTimeout and Closure function interview related things
 
+/**
+ * closuer definations--
+ * A closure is a function that remembers and has access to its outer (lexical) environment, even after the outer function has finished executing.
+ * A closure is a combination of a function and its lexical scope bundled together.
+ * A closure is a function that carries with it a reference to its outer (enclosing) environment.
+ * 
+ * | Concept      | What it Means                                                                                                                         |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| **Closure**  | A function that **remembers** the variables from its **outer (lexical) scope**, even after the outer function has returned.           |
+| **Callback** | A function that is **passed as an argument** to another function and **invoked later**, often in response to some event or condition. |
+
+ */
 //// approach 01
 // function x(){
 //     var i =1;
