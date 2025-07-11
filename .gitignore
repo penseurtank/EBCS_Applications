@@ -12,8 +12,8 @@ out/
 *.env.local
 
 # Personal Files
- myResume.html
-\interview_topic\myResume.html
+myResume.html
+/interview_topic/myResume.html
 
 # Logs
 npm-debug.log*
