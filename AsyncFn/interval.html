@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Async-Fn</title>
+  </head>
+  <body>
+    <h2>Lets play with interval...</h2>
+    <button id="start">start</button>
+    <button id="stop">stop</button>
+  </body>
+  <script>
+    let intervalId; // set global variable to store interval id.
+    const sayDate = function (str) {
+      console.log(str, new Date().toLocaleTimeString());
+    };
+
+    const startText = document
+      .querySelector("#start")
+      .addEventListener("click", function () {
+        if (!intervalId) {
+          intervalId = setInterval(sayDate, 2000, "EBCS Call -> ");
+          console.log("interval started");
+        }
+      });
+
+    const stopText = document
+      .querySelector("#stop")
+      .addEventListener("click", function () {
+        clearInterval(intervalId);
+        console.log("stopped interval!!!");
+      });
+  </script>
+</html>
